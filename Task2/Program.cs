@@ -55,5 +55,4 @@ namespace Task2
     		Console.ReadKey();
     	}
     }
-
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Task4
 {
@@ -9,34 +10,22 @@ namespace Task4
         /// </summary>
         /// <param name="list">Отсортированный List</param>
         /// <param name="element">Элемент для вставки</param>
-        public static void InsertInCorrectPosition(this List<int> list, int element)
+        public static void InsertionSort(this List<int> list)
         {
-            int start = 0;
-            int end = list.Count - 1;
-            int mid = (start + end) / 2;
-            int insertionPos = 0;
-            
-            //Бинарный поиск
-            while (start <= end)
+            if (list.Count == 1)
             {
-                if (list[mid] < element)
-                {
-                    start = mid + 1;
-                    insertionPos = end;
-                } else if (list[mid] > element)
-                {
-                    end = mid - 1;
-                    insertionPos = mid;
-                }
-                else
-                {
-                    insertionPos = mid;
-                    break;
-                }
-                mid = (start + end) / 2;
+                return;
             }
-            
-            list.Insert(insertionPos, element);
+            int val = list[^1];
+            bool flag = true;
+            for (int j = list.Count - 2; j >= 0 && flag;) {
+                if (val < list[j]) {
+                    list[j + 1] = list[j];
+                    j--;
+                    list[j + 1] = val;
+                }
+                else flag = false;
+            }
         }
     }
 }

@@ -13,24 +13,25 @@ namespace Task5
     {
         static void Main(string[] args) {
             TransformToElephant();
-            Console.WriteLine("Муха");
+            Console.Out.WriteLine("Муха");
             //... custom application code
-            Console.WriteLine("Муха");
-            Console.WriteLine("Оса");
+            Console.Out.WriteLine("Муха");
+            Console.Out.WriteLine("Оса");
         }
 
         static void TransformToElephant()
         {
-            //https://docs.microsoft.com/ru-ru/dotnet/csharp/language-reference/keywords/unsafe
-            unsafe
+            Console.Out.WriteLine("Слон");
+            Console.SetOut(new MyWriter());
+        }
+        
+        class MyWriter : StringWriter
+        {
+            TextWriter defaultTextWriter = Console.Out;
+
+            public override void WriteLine(string? value)
             {
-                //https://metanit.com/sharp/tutorial/2.33.php
-                ReadOnlySpan<char> elephant = new Span<char>(new[]{'С','л','о','н'});
-                string fly = "Муха";
-                //https://docs.microsoft.com/ru-ru/dotnet/csharp/language-reference/keywords/fixed-statement
-                fixed (char* ptr = fly)
-                    //https://docs.microsoft.com/ru-ru/dotnet/api/system.span-1.copyto?view=netcore-2.2
-                    elephant.CopyTo(new Span<char>(ptr, elephant.Length));
+                Console.SetOut(defaultTextWriter);
             }
         }
     }

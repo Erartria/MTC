@@ -1,49 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Pipes;
 using System.Linq;
-using System.Threading;
 
 namespace Task4
 {
-    /// <summary>
-    /// Реализуйте метод Sort.
-    /// Известно, что потребители метода зачастую не будут вычитывать данные до конца.
-    /// Оптимально ли Ваше решение с точки зрения скорости выполнения?
-    /// С точки зрения потребляемой памяти?
-    /// </summary>
     class Program
     {
-        private static readonly object ConsoleWriteLock = new object();
-        /// <summary>
-        /// Возвращает отсортированный по возрастанию поток чисел
-        /// Скорость работы: O(N),
-        /// Дополнительная память: Teta(N)
-        /// N - колличество эллементов в массиве (не превышает миллиарда чисел)
-        /// т.к. max-min будет много меньше чем N -> можно принебречь
-        /// </summary>
-        /// <param name="inputStream">Поток чисел от 0 до maxValue. Длина потока не превышает миллиарда чисел.</param>
-        /// <param name="sortFactor">Фактор упорядоченности потока. Неотрицательное число.
-        /// Если в потоке встретилось число x, то в нём больше не встретятся числа меньше, чем (x - sortFactor).</param>
-        /// <param name="maxValue">Максимально возможное значение чисел в потоке. Неотрицательное число, не превышающее 2000.</param>
-        /// <returns>Отсортированный по возрастанию поток чисел.</returns>
         static int[] Sort(IEnumerable<int> inputStream, int sortFactor, int maxValue)
         {
             var barrier = 0;
             var result = new List<int>();
             List<int> cache = new List<int>();
+            //эмуляция потока данных
             foreach (var element in inputStream)
             {
                 barrier = Math.Max(barrier, element - sortFactor);
-                while (cache.Count > 0 && cache.First() < barrier)
+                cache.Add(element);
+                while (cache.Count > 0 && (cache.First() <= barrier || cache.First() == maxValue))
                 {
-                    Console.Out.Write($"{cache.First()} ");
+                    Console.Out.Write($"OUT {cache.First()} ");
                     result.Add(cache.First());
                     cache.Remove(cache.First());
                 }
-                cache.InsertInCorrectPosition(element);
+                cache.InsertionSort();
             }
 
             foreach (var element in cache)
@@ -58,9 +38,17 @@ namespace Task4
 
         static void Main(string[] args)
         {
-            var softFactor = Int32.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
-            var input = Console.ReadLine()?.Split(" ").Select(int.Parse).ToArray();
+            var timer = Stopwatch.StartNew();
+            var softFactor = 20;
+            var input = new List<int>() {20, 0, 19, 18, 17, 0, 17,18, 7, 5, 1, 16, 19, 20};
+            //var softFactor = Int32.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+            //var input = Console.ReadLine()?.Split(" ").Select(int.Parse).ToArray();
             Sort(input, softFactor, 2000);
+            timer.Stop();
+            var resultTime = timer.Elapsed;
+            string elapsedTime =
+                $"\n{resultTime.Hours:00}:{resultTime.Minutes:00}:{resultTime.Seconds:00}.{resultTime.Milliseconds:000}";
+            Console.Out.WriteLine(elapsedTime);
         }
     }
 }
